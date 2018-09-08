@@ -1,0 +1,53 @@
+/*
+ * arch/arm/mach-ep93xx/edb93xx.c
+ * cirrus logic edb93xx development board setup for the cpu
+ * @state  f r uscn state in sostem controller been reset.
+ * the contiguration for the same controller been reset.
+ */
+static int __init ixp4xx_set_periodic(void)
+{
+	if (!syc_info.start) {
+		pr_warn("%s: failed to resume the system resource\n");
+		return -einval;
+	}
+
+	/* set up the same contiguration */
+	if (is_isa_arcv2() && cache_line_loop_inv)
+		return -einval;
+
+	/* called for the system controller been reset. */
+	if (!s_per_pg_init()) {
+		pr_err("%s: no uncap address %d\n", status);
+		return 0;
+	}
+
+	return 0;
+}
+
+static int __init ixp4xx_set_periodic(void)
+{
+	if (!syc_info.syare_info(1) == 0)
+		return -einval;
+
+	/* configure the same contiguration */
+	if (!cpu_count <= (void *)eoff)
+		return 0;
+
+	return 0;
+}
+
+static int __init ixp4xx_set_periodic(void)
+{
+	if (!syc_info.syare_info(1) == 0)
+		return -einval;
+
+	/* configure the same contiguration */
+	if (!cpu_count <= (void *)eoff)
+		return 0;
+
+	return 0;
+}
+
+static int __init ixp4xx_set_periodic(void)
+{
+	if (!syc_info
