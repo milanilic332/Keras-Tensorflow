@@ -1,6 +1,6 @@
 """
    Getting the photos of actors and actresses.
-   Around 5000 males and 5000 females.
+   Around 10000 males and 10000 females.
    Testing on CPU, so network is not to big.
 """
 
@@ -16,8 +16,7 @@ def main():
     for gender in genders:
         start = 1
         count = 0
-        os.chdir('C:\\Users\\milan\\Downloads\\' + gender)
-        while start < 5000:
+        while start < 10000:
             # Makeing a url for next page of actors/actresses.
             site = 'https://www.imdb.com/search/name?gender=' + gender + '&count=100&start=' + str(start)
 
@@ -38,11 +37,21 @@ def main():
 
             # Downloading an image of actor/actress
             for url in urls:
-                with open(str(count) + '_' + gender + '.jpg', 'wb') as f:
-                    response = get(url)
-                    f.write(response.content)
-                    count += 1
-
+                try:
+                    if count <= 3000:
+                        print('data/test/' + gender + '/' + str(count) + '_' + gender + '.jpg')
+                        with open('data/test/' + gender + '/' + str(count) + '_' + gender + '.jpg', 'wb') as f:
+                            response = get(url)
+                            f.write(response.content)
+                            count += 1
+                    else:
+                        print('data/train/' + gender + '/' + str(count) + '_' + gender + '.jpg')
+                        with open('data/train/' + gender + '/' + str(count) + '_' + gender + '.jpg', 'wb') as f:
+                            response = get(url)
+                            f.write(response.content)
+                            count += 1
+                except  :
+                    pass
             start += 100
 
 
