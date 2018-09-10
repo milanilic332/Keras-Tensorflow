@@ -1,15 +1,7 @@
-"""
-    Making CNN for classification of images from
-    https://www.kaggle.com/grassknoted/asl-alphabet.
-"""
-
 from keras.preprocessing.image import ImageDataGenerator
-from keras.models import Sequential
+from keras.applications.inception_resnet_v2 import InceptionResNetV2
 from keras.layers import Dense
-from keras.layers import Dropout
-from keras.layers import Flatten
-from keras.layers.convolutional import Conv2D
-from keras.layers.convolutional import MaxPooling2D
+from keras.models import Model
 from keras.optimizers import Adam
 from keras.callbacks import TensorBoard, ModelCheckpoint
 
@@ -52,43 +44,10 @@ def main():
                                                       class_mode='categorical',
                                                       batch_size=16)
 
-    # Model architecture
-    model = Sequential()
 
-    # Conv1 layer
-    model.add(Conv2D(128, (9, 9), strides=3, input_shape=(img_width, img_height, 3), activation='relu'))
-    model.add(MaxPooling2D((3, 3)))
-
-    # Conv2 layer
-    model.add(Conv2D(256, (5, 5), activation='relu', padding='same'))
-    model.add(MaxPooling2D((3, 3)))
-
-    # Conv3 layer
-    model.add(Conv2D(512, (3, 3), activation='relu', padding='same'))
-
-    # Conv4 layer
-    model.add(Conv2D(256, (3, 3), activation='relu', padding='same'))
-
-    # Conv5 layer
-    model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
-    model.add(MaxPooling2D((2, 2)))
-
-    model.add(Flatten())
-
-    # FC1 layer
-    model.add(Dense(4096, activation='relu'))
-    model.add(Dropout(0.3))
-
-    # FC2 layer
-    model.add(Dense(1024, activation='relu'))
-    model.add(Dropout(0.2))
-
-    # FC3 layer
-    model.add(Dense(256, activation='relu'))
-    model.add(Dropout(0.1))
-
-    # Output layer
-    model.add(Dense(len(classes), activation='softmax'))
+    base_model = InceptionResNetV2(include_top=False, pooling='max', input_shape=(img_width, img_height, 3))
+    outputs = Dense(len(classes), activation='softmax')(base_model.output)
+    model = Model(base_model.inputs, outputs)
 
     optimizer = Adam(0.0001)
 
@@ -96,13 +55,13 @@ def main():
     model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
 
     # Using TensorBoard callback for data visualization
-    tbCallback = TensorBoard(log_dir='logs/my', histogram_freq=0, batch_size=32, write_graph=True, write_grads=True, write_images=True)
+    tbCallback = TensorBoard(log_dir='logs/res', histogram_freq=0, batch_size=32, write_graph=True, write_grads=True, write_images=True)
 
     # Using ModelCheckpoint for saving the best model overall
-    modelchkp = ModelCheckpoint('models/my/saved_model.h5', save_best_only=True)
+    modelchkp = ModelCheckpoint('models/res/saved_model.h5', save_best_only=True)
 
     # Training a model.
-    model.fit_generator(generator=train_generator, steps_per_epoch=62500//16, epochs=20,
+    model.fit_generator(generator=train_generator, steps_per_epoch=62500//16, epochs=5,
                         validation_data=test_generator, validation_steps=12524//16,
                         callbacks=[tbCallback, modelchkp])
 
