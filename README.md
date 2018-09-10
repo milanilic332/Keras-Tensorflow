@@ -5,7 +5,8 @@ Building deep neural networks using keras and tensorflow for various problems.
   * Image classification of sign language letters, dataset from https://www.kaggle.com/grassknoted/asl-alphabet.  
   * Train data - 2500 images for every class.  
   * Validation data - 500 images for every class.  
-  * Used image augmentation and got around 97% accuracy.  
+  * Used image augmentation and got around 97% accuracy with my cnn.
+  * With InceptionResNetV2() got 99.5%.
 
 * IMDb faces:  
   * Image classification of actors and actresses based on gender. Around 94% accuracy.
